@@ -8,6 +8,7 @@ window.addEventListener("load", function () {
 
 function autorisation() {
 	const autorisation = "Basic dGVzdF80bkU1MDBkcXJWZnVBQ2ozdENyekw2VkRFRGRHNlYySzFPS0xQdklIV2R3";
+	const my_url = "vk.com"
 	fetch("https://api.yookassa.ru/v3/", {
 		headers: {
 			Authorization: {
