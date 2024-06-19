@@ -6,27 +6,26 @@ window.addEventListener("load", function () {
 	autorisation();
 });
 
-const success_url = "https://zdias569.github.io/success"
-
-const params = {
-	"amount": {
-		"value": "100",
-		"currency": "RUB"
-	},
-	"payment_method_data": {
-		"type": "bank_card"
-	},
-	"confirmation": {
-		"type": "redirect",
-		"return_url": success_url
-	},
-	"description": "Списываем оплату",
-	"save_payment_method": "false"
-}
-
 function autorisation() {
+	const success_url = "https://zdias569.github.io/success"
 
-	fetch("https://api.yookassa.ru/v3/", {
+	const params = {
+		"amount": {
+			"value": "100",
+			"currency": "RUB"
+		},
+		"payment_method_data": {
+			"type": "bank_card"
+		},
+		"confirmation": {
+			"type": "redirect",
+			"return_url": success_url
+		},
+		"description": "Списываем оплату",
+		"save_payment_method": "false"
+	}
+
+	fetch("https://api.yookassa.ru/v3/payments", {
 		method: 'POST',
 		body: JSON.stringify(params),
 		headers: {
