@@ -30,6 +30,7 @@ function autorisation() {
 		body: JSON.stringify(params),
 		headers: {
 			'Authorization': 'Basic NDA1MTMwOnRlc3RfaUVsVnFpcGNlZ2luRnNzSjhRMG1QbmRsblZWdHUyc3dJVW5nRk9LaVAyYw==',
+			'Access-Control-Allow-Origin': "no-cors",
 			'Content-type': 'application/json',
 		}
 	})
