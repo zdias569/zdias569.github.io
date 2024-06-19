@@ -6,18 +6,43 @@ window.addEventListener("load", function () {
 	autorisation();
 });
 
+const success_url = "https://zdias569.github.io/success"
+
+const params = {
+	"amount": {
+		"value": "100",
+		"currency": "RUB"
+	},
+	"payment_method_data": {
+		"type": "bank_card"
+	},
+	"confirmation": {
+		"type": "redirect",
+		"return_url": success_url
+	},
+	"description": "Списываем оплату",
+	"save_payment_method": "false"
+}
+
 function autorisation() {
-	const autorisation = "Basic dGVzdF80bkU1MDBkcXJWZnVBQ2ozdENyekw2VkRFRGRHNlYySzFPS0xQdklIV2R3";
-	const my_url = "vk.com"
+
 	fetch("https://api.yookassa.ru/v3/", {
+		method: 'POST',
+		body: JSON.stringify(params),
 		headers: {
-			Authorization: {
-				username: "405111",
-				password: "test_4nE500dqrVfuACj3tCrzL6VDEDdG6V2K1OKLPvIHWdw"
-			}
+			'Authorization': 'Basic NDA1MTExOnRlc3RfNG5FNTAwZHFyVmZ1QUNqM3RDcnpMNlZERURkRzZWMksxT0tMUHZJSFdkdw==',
+			'Content-type': 'application/json; charset=UTF-8',
 		}
 	})
-		.then(response => console.log(response.result))
+		.then((response) => {
+			if (!response.ok) {
+				throw new Error('Error occurred!');
+			}
+			return response.json();
+		})
+		.then((data) => {
+			console.log(data)
+		})
 		.catch(err => console.log(err))
 
 }
