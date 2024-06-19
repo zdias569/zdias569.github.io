@@ -30,7 +30,7 @@ function autorisation() {
 		body: JSON.stringify(params),
 		headers: {
 			'Authorization': 'Basic NDA1MTExOnRlc3RfNG5FNTAwZHFyVmZ1QUNqM3RDcnpMNlZERURkRzZWMksxT0tMUHZJSFdkdw==',
-			'Content-type': 'application/json; charset=UTF-8',
+			'Content-type': 'application/json',
 		}
 	})
 		.then((response) => {
