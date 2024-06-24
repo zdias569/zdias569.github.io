@@ -9,35 +9,160 @@
 </head>
 
 <body>
-	<h1>
-		Store123
+	<h1 class="main-title">
+		Box Store
 	</h1>
 	<section class="products">
 		<h2 class="products__title">
 			Products
 		</h2>
-		<ul class="products__list">
+		<ul class="products__list" id="product_list">
 			<li class="products__item">
-				<div class="product">
+				<div class="product" data-price="2">
 					<h3 class="product__title">
-						Product name
+						Box 1
 					</h3>
-					<!-- <img class="product__image" src="https://em-pack.ru/assets/images/products/479/korobka-dlya-pereezda4.png"
-						alt=""> -->
+					<img class="product__image" src="https://em-pack.ru/assets/images/products/479/korobka-dlya-pereezda4.png"
+						alt="">
 					<p class="product__lead">
-						Product lead
+						Standard box
 					</p>
-					<strong class="product__price">
-						110р.
-					</strong>
-					<button class="product__buy" id="buy">
-						Купить
-					</button>
+					<div class="product__buy-container">
+						<strong class="product__price">
+							2р.
+						</strong>
+						<button class="product__buy">
+							Купить
+						</button>
+					</div>
+				</div>
+			</li>
+			<li class="products__item">
+				<div class="product" data-price="3">
+					<h3 class="product__title">
+						Box 2
+					</h3>
+					<img class="product__image" src="https://em-pack.ru/assets/images/products/479/korobka-dlya-pereezda4.png"
+						alt="">
+					<p class="product__lead">
+						Big box
+					</p>
+					<div class="product__buy-container">
+						<strong class="product__price">
+							3р.
+						</strong>
+						<button class="product__buy">
+							Купить
+						</button>
+					</div>
+				</div>
+			</li>
+			<li class="products__item">
+				<div class="product" data-price="1">
+					<h3 class="product__title">
+						Box 3
+					</h3>
+					<img class="product__image" src="https://em-pack.ru/assets/images/products/479/korobka-dlya-pereezda4.png"
+						alt="">
+					<p class="product__lead">
+						Small box
+					</p>
+					<div class="product__buy-container">
+						<strong class="product__price">
+							1р.
+						</strong>
+						<button class="product__buy">
+							Купить
+						</button>
+					</div>
 				</div>
 			</li>
 		</ul>
 	</section>
-	<script src="scripts.js"></script>
+	<div class="modal" id="modal">
+		<div class="modal__content">
+			<button class="modal__close" id="modal_close">
+				X
+			</button>
+			<div id="payment-form"></div>
+		</div>
+	</div>
+	<script src="https://yookassa.ru/checkout-widget/v1/checkout-widget.js"></script>
+	<script>
+		let product_list_el;
+		let modal_el;
+		let modal_close_el;
+
+		window.addEventListener("load", function () {
+			product_list_el = document.getElementById("product_list");
+			product_list_el.addEventListener("click", onClickProductList);
+			modal_el = document.getElementById("modal");
+			modal_close_el = document.getElementById("modal_close");
+			modal_close_el.addEventListener("click", closeModal);
+		});
+
+		function closeModal() {
+			modal_el.style.display = "none";
+		}
+
+		function onClickProductList(e) {
+			const buy_btn = e.target.closest(".product__buy");
+			if (!buy_btn) {
+				return;
+			}
+
+			modal_el.style.display = "flex";
+
+			const product = buy_btn.closest(".product");
+			const price = product.getAttribute("data-price");
+			const dog_id = 57;
+
+			getConfirmationToken(price, dog_id);
+		}
+
+		function getConfirmationToken(price, dog_id) {
+			const params = {
+				amount: price,
+				dogovor: dog_id,
+				confirmation: {
+					"type": "embedded"
+				}
+			}
+			fetch("https://api.t2tc.ru/yookassa/register", {
+				method: 'POST',
+				body: JSON.stringify(params),
+				headers: {
+					'Content-type': 'application/json'
+				}
+			})
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error('Error occurred!');
+					}
+					return response.json();
+				})
+				.then((data) => {
+					console.log(data)
+					const token = data.result.confirmation.confirmation_token;
+					const payment_id = data.result.id;
+					renderWidget(token, payment_id)
+				})
+				.catch(err => console.log(err));
+		}
+
+		function renderWidget(token, payment_id) {
+			const checkout = new window.YooMoneyCheckoutWidget({
+				confirmation_token: token, //Токен, который вы получили после создания платежа
+				return_url: `http://127.0.0.1:5500/success.html?payment_id=${payment_id}`, //Ссылка на страницу завершения оплаты
+				error_callback: function (error) {
+					console.log(error);
+				}
+			});
+
+			//Отображение платежной формы в контейнере
+			checkout.render('payment-form');
+		}
+	</script>
 </body>
 
 </html>

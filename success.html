@@ -9,9 +9,61 @@
 </head>
 
 <body>
-	<span>
-		Спфсибо за покупку!
-	</span>
+	<div class="payment_status" id="payment_status"></div>
+	<script>
+		window.addEventListener("load", () => {
+			try {
+				const payment_id = new URLSearchParams(window.location.search).get("payment_id");
+				if (payment_id) {
+					getPaymentStatus(payment_id);
+				} else {
+					console.error("Параметр 'payment_id' не найден в URL.");
+				}
+			} catch (e) {
+				console.error("Ошибка парсинга JSON из параметра 'payment_id':", e);
+			}
+		});
+
+		function getPaymentStatus(payment_id) {
+			fetch(`https://api.t2tc.ru/yookassa/status?id=${payment_id}`, {
+				method: 'GET',
+				headers: {
+					'Content-type': 'application/json'
+				}
+			})
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error('Error occurred!');
+					}
+					return response.json();
+				})
+				.then((response) => {
+					renderStatus(response.result);
+				})
+				.catch(err => console.log(err));
+		}
+
+		function renderStatus(status) {
+			let message = "";
+			switch (status) {
+				case "succeeded":
+					message = "Операция прошла успешно!";
+					break;
+				case "canceled":
+					message = "Оплата не прошла!";
+					break;
+			}
+
+			document.getElementById("payment_status").innerHTML = `
+				<h1>
+					${message}	
+				</h1>
+				<a href="./index.html">
+					Вернуться назад
+				</a>
+			`;
+		}
+	</script>
 </body>
 
 </html>
